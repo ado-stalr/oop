@@ -1,7 +1,6 @@
 #include <fstream>
-#include <optional>
 #include <iostream>
-#include <sstream>
+#include <optional>
 #include <string>
 
 #define MATRIX_SIZE 3
@@ -44,26 +43,27 @@ std::optional<WrappedMatrix3x3> ReadSquareMatrix(const std::string& fileName)
 	}
 
 	WrappedMatrix3x3 matrix = {
-		{0, 0, 0, 0, 0, 0, 0, 0, 0}
+		{ 0, 0, 0,
+			0, 0, 0,
+			0, 0, 0 }
 	};
 
-	std::string line;
 	for (int i = 0; i < MATRIX_SIZE; i++)
 	{
-		std::getline(matrixFile, line);
-		if (matrixFile.bad() || matrixFile.eof()) {
-			std::cout << "Incorrect matrix file format. Matrix should be 3 x 3\n";
-			return std::nullopt;
-		}
-		std::istringstream lineStream(line);
 		for (int j = 0; j < MATRIX_SIZE; j++)
 		{
-			if (!(lineStream >> matrix.items[j][i]))
+			if (!(matrixFile >> matrix.items[j][i]))
 			{
 				std::cout << "Incorrect matrix file format. Matrix should be 3 x 3\n";
 				return std::nullopt;
 			}
 		}
+	}
+
+	if (matrixFile.bad() || !matrixFile.eof())
+	{
+		std::cout << "Incorrect matrix file format. Matrix should be 3 x 3\n";
+		return std::nullopt;
 	}
 
 	return matrix;
@@ -84,16 +84,20 @@ void PrintSquareMatrix(WrappedMatrix3x3 matrix)
 	}
 }
 
-
 WrappedMatrix3x3 MultiplyMatrix(WrappedMatrix3x3 matrix1, WrappedMatrix3x3 matrix2)
 {
 	WrappedMatrix3x3 multipliedMatrix = {
-		{0, 0, 0, 0, 0, 0, 0, 0, 0}
+		{ 0, 0, 0,
+			0, 0, 0,
+			0, 0, 0 }
 	};
-	for (int i = 0; i < MATRIX_SIZE; i++) {
-		for (int j = 0; j < MATRIX_SIZE; j++) {
-			for (int k = 0; k < MATRIX_SIZE; k++) {
-				multipliedMatrix.items[i][j] += matrix1.items[i][k] * matrix2.items[k][j];
+	for (int i = 0; i < MATRIX_SIZE; i++)
+	{
+		for (int j = 0; j < MATRIX_SIZE; j++)
+		{
+			for (int k = 0; k < MATRIX_SIZE; k++)
+			{
+				multipliedMatrix.items[j][i] += matrix1.items[k][i] * matrix2.items[j][k];
 			}
 		}
 	}
@@ -120,7 +124,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	PrintSquareMatrix(MultiplyMatrix(matrix1.value(), matrix2.value()));
+	PrintSquareMatrix(MultiplyMatrix(*matrix1, *matrix2));
 
 	return 0;
 }
