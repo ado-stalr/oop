@@ -35,7 +35,7 @@ void ClearFile(const std::string& fileName)
 	clear_file.close();
 }
 
-void CopyFile(std::ifstream& input, std::ofstream& output)
+void CopyFile(std::istream& input, std::ostream& output) //переименовать
 {
 	char ch;
 	while (input.get(ch))
@@ -62,12 +62,16 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	//выделить функцию inputs[] output
 	for (int i = 0; i < args->inputFileNames.size(); i++)
 	{
 		std::ifstream input(args->inputFileNames[i]);
 		if (!input.is_open())
 		{
 			std::cout << "Failed to open " << args->inputFileNames[i] << " for reading\n";
+
+			//удадить очистку
+
 			output.close();
 			ClearFile(std::string(args->outputFileName));
 			return 1;
@@ -81,11 +85,12 @@ int main(int argc, char* argv[])
 			return 1;
 		}
 
-		if (!output.flush())
-		{
-			std::cout << "Failed to copy text to output file\n";
-			return 1;
-		}
+	}
+
+	if (!output.flush())
+	{
+		std::cout << "Failed to copy text to output file\n";
+		return 1;
 	}
 
 	return 0;

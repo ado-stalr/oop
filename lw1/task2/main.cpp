@@ -56,7 +56,8 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 
 	return args;
 }
-
+//Оптимизировать без цикла
+// RotateByte(uint8_t byte, int shifts, Direction dir)
 int RotateByte(int number, int shiftsAmount, int direction)
 {
 	int resultNumber = number;
