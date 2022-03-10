@@ -3,8 +3,8 @@
 #include <optional>
 #include <queue>
 
-#define FIELD_SIZE 100
-#define START_FILLING_POINT_CHAR 'O'
+constexpr int FIELD_SIZE = 100;
+constexpr char START_FILLING_POINT_CHAR = 'O';
 #define FILLING_POINT_CHAR '.'
 
 typedef char Field[FIELD_SIZE][FIELD_SIZE];
@@ -63,7 +63,8 @@ void FillField(Field* field, std::queue<Point>* fillingPoints)
 	}
 }
 
-void ReadField(Field* field, std::istream* input, std::queue<Point>* fillingPoints)
+// переделать на указатель stream
+void ReadField(Field& field, std::istream* input, std::queue<Point>* fillingPoints)
 {
 	for (int i = 0; i < FIELD_SIZE; i++)
 	{
@@ -75,7 +76,7 @@ void ReadField(Field* field, std::istream* input, std::queue<Point>* fillingPoin
 		}
 		for (int j = 0; j < line.length() && j < FIELD_SIZE; j++)
 		{
-			(*field)[j][i] = line[j];
+			field[j][i] = line[j];
 			if (line[j] == START_FILLING_POINT_CHAR)
 			{
 				fillingPoints->push({ i, j });
@@ -114,6 +115,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	// перенести к записи
 	std::ofstream output(args->outputFileName);
 	if (!output.is_open())
 	{
@@ -124,7 +126,8 @@ int main(int argc, char* argv[])
 	Field field = { 0 };
 	std::queue<Point> fillingPoints;
 
-	ReadField(&field, &input, &fillingPoints);
+	//сделать оберточнкую функцию readFieldFromFile
+	ReadField(field, &input, &fillingPoints);
 
 	FillField(&field, &fillingPoints);
 

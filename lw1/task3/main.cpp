@@ -42,11 +42,7 @@ std::optional<WrappedMatrix3x3> ReadSquareMatrix(const std::string& fileName)
 		return std::nullopt;
 	}
 
-	WrappedMatrix3x3 matrix = {
-		{ 0, 0, 0,
-			0, 0, 0,
-			0, 0, 0 }
-	};
+	WrappedMatrix3x3 matrix = {};
 
 	for (int i = 0; i < MATRIX_SIZE; i++)
 	{
@@ -84,13 +80,11 @@ void PrintSquareMatrix(WrappedMatrix3x3 matrix)
 	}
 }
 
+//принимать входные матрицы по константной ссылке
 WrappedMatrix3x3 MultiplyMatrix(WrappedMatrix3x3 matrix1, WrappedMatrix3x3 matrix2)
 {
-	WrappedMatrix3x3 multipliedMatrix = {
-		{ 0, 0, 0,
-			0, 0, 0,
-			0, 0, 0 }
-	};
+	WrappedMatrix3x3 multipliedMatrix = {};
+
 	for (int i = 0; i < MATRIX_SIZE; i++)
 	{
 		for (int j = 0; j < MATRIX_SIZE; j++)
