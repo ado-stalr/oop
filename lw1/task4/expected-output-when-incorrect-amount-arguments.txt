@@ -1,0 +1,2 @@
+Invalid arguments count
+Usage: rle.exe <pack / unpack> <input file> <output file>

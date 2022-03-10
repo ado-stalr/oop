@@ -1,0 +1,2 @@
+Invalid <pack / unpack> argument
+Usage: rle.exe <pack / unpack> <input file> <output file>
