@@ -4,7 +4,7 @@
 #include <optional>
 #include <string>
 
-enum operation
+enum Operation
 {
 	UNKNOWN,
 	PACK,
@@ -13,12 +13,23 @@ enum operation
 
 struct Args
 {
-	operation operation;
+	Operation operation;
 	std::string inputFileName;
 	std::string outputFileName;
 };
+//добавить тест на пустой
+struct RLEChunk
+{
+	char ch = 0;
+	uint8_t counter = 0;
+};
 
-operation ParseOperation(char* arg)
+std::optional<RLEChunk> TryReadChunk(std::istream& strm);
+void WriteChunk(RLEChunk chunk, std::ostream& strm);
+void CompressChar(char ch, RLEChunk& chunk, std::ostream& strm);
+
+
+Operation ParseOperation(char* arg)
 {
 	if (strcasecmp(arg, "PACK") == 0)
 	{
@@ -56,6 +67,7 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	return args;
 }
 
+// переделать на uint 8
 void printRepeatingChar(char ch, char count, std::ostream& output)
 {
 	for (char i = 0; i < count; i++)
@@ -118,6 +130,8 @@ int pack(std::istream& input, std::ostream& output)
 	return 0;
 }
 
+// не соблюдаются именования
+// возращать тру при успехе и наоборот
 int unpack(std::istream& input, std::ostream& output)
 {
 	char ch, counter;
@@ -148,14 +162,14 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	std::ifstream input(args->inputFileName);
+	std::ifstream input(args->inputFileName, std::ios_base::binary);
 	if (!input.is_open())
 	{
 		std::cout << "Failed to open input file for reading\n";
 		return 1;
 	}
 
-	std::ofstream output(args->outputFileName);
+	std::ofstream output(args->outputFileName, std::ios_base::binary);
 	if (!output.is_open())
 	{
 		std::cout << "Failed to open output file for writing\n";

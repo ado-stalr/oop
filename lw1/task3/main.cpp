@@ -81,7 +81,7 @@ void PrintSquareMatrix(WrappedMatrix3x3 matrix)
 }
 
 //принимать входные матрицы по константной ссылке
-WrappedMatrix3x3 MultiplyMatrix(WrappedMatrix3x3 matrix1, WrappedMatrix3x3 matrix2)
+WrappedMatrix3x3 MultiplyMatrix(WrappedMatrix3x3 const &matrix1, WrappedMatrix3x3 const &matrix2)
 {
 	WrappedMatrix3x3 multipliedMatrix = {};
 

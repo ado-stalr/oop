@@ -29,12 +29,6 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	return args;
 }
 
-void ClearFile(const std::string& fileName)
-{
-	std::fstream clear_file(fileName, std::ios::out);
-	clear_file.close();
-}
-
 void CopyFile(std::istream& input, std::ostream& output) //переименовать
 {
 	char ch;
@@ -43,6 +37,27 @@ void CopyFile(std::istream& input, std::ostream& output) //переименов�
 		if (!output.put(ch))
 		{
 			break;
+		}
+	}
+}
+
+int JoinFiles()
+{
+	for (int i = 0; i < args->inputFileNames.size(); i++)
+	{
+		std::ifstream input(args->inputFileNames[i]);
+		if (!input.is_open())
+		{
+			std::cout << "Failed to open " << args->inputFileNames[i] << " for reading\n";
+			return 1;
+		}
+
+		CopyFile(input, output);
+
+		if (input.bad())
+		{
+			std::cout << "Failed to read data from input file\n";
+			return 1;
 		}
 	}
 }
@@ -62,30 +77,9 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	//выделить функцию inputs[] output
-	for (int i = 0; i < args->inputFileNames.size(); i++)
-	{
-		std::ifstream input(args->inputFileNames[i]);
-		if (!input.is_open())
-		{
-			std::cout << "Failed to open " << args->inputFileNames[i] << " for reading\n";
+	// выделить функцию inputs[] output
+	JoinFiles(args->inputFileNames, output);
 
-			//удадить очистку
-
-			output.close();
-			ClearFile(std::string(args->outputFileName));
-			return 1;
-		}
-
-		CopyFile(input, output);
-
-		if (input.bad())
-		{
-			std::cout << "Failed to read data from input file\n";
-			return 1;
-		}
-
-	}
 
 	if (!output.flush())
 	{
