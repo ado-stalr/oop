@@ -40,47 +40,63 @@ fc.exe "%TEMP%\console_output.txt" expected-output-when-odd-bites-for-unpack.txt
 if ERRORLEVEL 1 goto err
 
 echo Test 6: simple pack - unpack
+echo - pack
 %PROGRAM% pack input-simple-pack.txt "%TEMP%"\output.txt
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output.txt" expected-output-simple-pack-input.txt > nul
 if ERRORLEVEL 1 goto err
-
+echo - unpack
 %PROGRAM% unpack "%TEMP%"\output.txt "%TEMP%"\output2.txt
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output2.txt" input-simple-pack.txt > nul
 if ERRORLEVEL 1 goto err
 
-echo Test 7: 255 same bites pack - unpack
+echo Test 7: 255 same bites
+echo - pack
 %PROGRAM% pack input-255-chars.txt "%TEMP%"\output.txt
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output.txt" expected-output-when-input-255-same-chars.txt > nul
 if ERRORLEVEL 1 goto err
-
+echo - unpack
 %PROGRAM% unpack "%TEMP%"\output.txt "%TEMP%"\output2.txt
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output2.txt" input-255-chars.txt > nul
 if ERRORLEVEL 1 goto err
 
-echo Test 8: 256 same bites pack - unpack
+echo Test 8: 256 same bites
+echo - pack
 %PROGRAM% pack input-256-chars.txt "%TEMP%"\output.txt
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output.txt" expected-output-when-input-256-same-chars.txt > nul
 if ERRORLEVEL 1 goto err
-
+echo - unpack
 %PROGRAM% unpack "%TEMP%"\output.txt "%TEMP%"\output2.txt
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output2.txt" input-256-chars.txt > nul
 if ERRORLEVEL 1 goto err
 
 echo Test 9: 257 same bites pack - unpack
+echo - pack
 %PROGRAM% pack input-257-chars.txt "%TEMP%"\output.txt
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output.txt" expected-output-when-input-257-same-chars.txt > nul
 if ERRORLEVEL 1 goto err
-
+echo - unpack
 %PROGRAM% unpack "%TEMP%"\output.txt "%TEMP%"\output2.txt
 if ERRORLEVEL 1 goto err
 fc.exe "%TEMP%\output2.txt" input-257-chars.txt > nul
+if ERRORLEVEL 1 goto err
+
+echo Test 10: pack - unpack empty file
+echo - pack
+%PROGRAM% pack empty.txt "%TEMP%"\output.txt
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output.txt" empty.txt > nul
+if ERRORLEVEL 1 goto err
+echo - unpack
+%PROGRAM% unpack "%TEMP%"\output.txt "%TEMP%"\output2.txt
+if ERRORLEVEL 1 goto err
+fc.exe "%TEMP%\output2.txt" empty.txt > nul
 if ERRORLEVEL 1 goto err
 
 echo Program testing succeeded

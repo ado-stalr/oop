@@ -25,9 +25,36 @@ struct RLEChunk
 };
 
 std::optional<RLEChunk> TryReadChunk(std::istream& strm);
-void WriteChunk(RLEChunk chunk, std::ostream& strm);
+void WriteUncompressedChunk(RLEChunk chunk, std::ostream& strm);
 void CompressChar(char ch, RLEChunk& chunk, std::ostream& strm);
+void WriteCompressedChar(RLEChunk chunk, std::ostream& output);
 
+void CompressChar(char ch, RLEChunk& chunk, std::ostream& output)
+{
+	if (!chunk.counter)
+	{
+		chunk.ch = ch;
+		chunk.counter++;
+		return;
+	}
+
+	if (chunk.ch != ch)
+	{
+		WriteCompressedChar(chunk, output);
+		chunk.ch = ch;
+		chunk.counter = 1;
+	}
+	else
+	{
+		if (uint8_t (chunk.counter + 1) == 0)
+		{
+			WriteCompressedChar(chunk, output);
+			chunk.counter = 0;
+		}
+
+		chunk.counter++;
+	}
+}
 
 Operation ParseOperation(char* arg)
 {
@@ -67,91 +94,91 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
 	return args;
 }
 
-// переделать на uint 8
-void printRepeatingChar(char ch, char count, std::ostream& output)
+void WriteUncompressedChunk(RLEChunk chunk, std::ostream& output)
 {
-	for (char i = 0; i < count; i++)
+	for (uint8_t i = 0; i < chunk.counter; i++)
 	{
-		if (!output.put(ch))
+		if (!output.put(chunk.ch))
 		{
 			break;
 		}
 	}
 }
 
-void printPackedChar(char ch, char count, std::ostream& output)
+// исключение
+// enum class ReadChunkResult{ OK, EoF, Error };
+// [[nodiscard]] ReadChunkResult ReadChunk(RLEChunk& chunk);
+// вариант
+/*
+std::optional<std::variant<std::monostate, RLEChunk>>;
+ */
+std::optional<RLEChunk> TryReadChunk(std::istream& input)
 {
-	output.put(ch);
-	output.put(count);
+	RLEChunk chunk;
+	input.get(chunk.ch);
+
+	char counterChar = 0;
+	if (!input.get(counterChar) || counterChar == 0)
+	{
+		chunk.counter = (uint8_t)(counterChar);
+		std::cout << "Incorrect packed data\n";
+		return std::nullopt;
+	}
+	return chunk;
 }
 
-int pack(std::istream& input, std::ostream& output)
+void WriteCompressedChar(RLEChunk chunk, std::ostream& output)
 {
-	char ch, currentCh;
-	char counter = 0;
+	output.put(chunk.ch);
+	output.put(chunk.counter);
+}
+
+bool Pack(std::istream& input, std::ostream& output)
+{
+	char ch;
+	RLEChunk chunk;
+
 	while (input.get(ch))
 	{
-		if (!counter)
-		{
-			currentCh = ch;
-			counter++;
-			continue;
-		}
-
-		if (currentCh != ch)
-		{
-			printPackedChar(currentCh, counter, output);
-			currentCh = ch;
-			counter = 1;
-		}
-		else
-		{
-			if (char(counter + 1) == 0)
-			{
-				printPackedChar(currentCh, counter, output);
-				counter = 0;
-			}
-
-			counter++;
-		}
+		CompressChar(ch, chunk, output);
 	}
 
-	if (counter)
+	if (chunk.counter)
 	{
-		printPackedChar(currentCh, counter, output);
+		WriteCompressedChar(chunk, output);
 	}
 
 	if (!output.flush())
 	{
 		std::cout << "Failed to write to output file\n";
-		return 1;
+		return false;
 	}
 
-	return 0;
+	return true;
 }
 
-// не соблюдаются именования
-// возращать тру при успехе и наоборот
-int unpack(std::istream& input, std::ostream& output)
+bool Unpack(std::istream& input, std::ostream& output)
 {
-	char ch, counter;
-	while (input.get(ch))
+	RLEChunk chunk;
+	while (input.get(chunk.ch))
 	{
-		if (!input.get(counter) || counter == 0)
+		char counterChar = 0;
+		if (!input.get(counterChar) || counterChar == 0)
 		{
 			std::cout << "Incorrect packed data\n";
-			return 1;
+			return false;
 		}
-		printRepeatingChar(ch, counter, output);
+		chunk.counter = (uint8_t)(counterChar);
+		WriteUncompressedChunk(chunk, output);
 	}
 
 	if (!output.flush())
 	{
 		std::cout << "Failed to write to output file\n";
-		return 1;
+		return false;
 	}
 
-	return 0;
+	return true;
 }
 
 int main(int argc, char* argv[])
@@ -161,7 +188,7 @@ int main(int argc, char* argv[])
 	{
 		return 1;
 	}
-
+	// выделить функцию которая запаковывает по имени файла
 	std::ifstream input(args->inputFileName, std::ios_base::binary);
 	if (!input.is_open())
 	{
@@ -179,9 +206,9 @@ int main(int argc, char* argv[])
 	switch (args->operation)
 	{
 	case PACK:
-		return pack(input, output);
+		return Pack(input, output) ? 0 : 1;
 	case UNPACK:
-		return unpack(input, output);
+		return Unpack(input, output) ? 0 : 1;
 	default:
 		return 1;
 	}
