@@ -1,9 +1,9 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <string>
 #include <vector>
-#include <iterator>
 
 std::vector<float> ReadArrayFromStream(std::istream& input)
 {
@@ -15,13 +15,13 @@ bool DivideByHalfMax(std::vector<float>& numbers)
 	float maxEl = *std::max_element(numbers.begin(), numbers.end());
 	float halfMaxEl = maxEl / 2;
 
-	if(halfMaxEl == 0)
+	if (halfMaxEl == 0)
 	{
 		std::cout << "Divide by zero is not allowed" << std::endl;
 		return false;
 	}
 
-	for (float & number : numbers)
+	for (float& number : numbers)
 	{
 		number /= halfMaxEl;
 	}
@@ -34,7 +34,7 @@ void SortVector(std::vector<float>& arr)
 	sort(arr.begin(), arr.end());
 }
 
-void WriteVectorToStream(std::vector<float>& arr, std::ostream &output)
+void WriteVectorToStream(std::vector<float>& arr, std::ostream& output)
 {
 	copy(arr.begin(), arr.end(), std::ostream_iterator<float>(output << std::setprecision(3) << std::fixed, ", "));
 }
