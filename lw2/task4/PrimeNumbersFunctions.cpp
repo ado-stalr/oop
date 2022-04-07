@@ -35,10 +35,11 @@ std::optional<int> ParseProgramArgs(int argc, char* argv[])
 std::set<int> GeneratePrimeNumbersSet(int upperBound)
 {
 	std::set<int> primeNumbers;
-	if (upperBound < 0)
+	if (upperBound < 0 || upperBound > MAX_NUMBER)
 	{
 		return primeNumbers;
 	}
+
 	// Дать название лучше
 	// (был array)
 	std::vector<bool> primeNumberMatches(upperBound + 1, true);
