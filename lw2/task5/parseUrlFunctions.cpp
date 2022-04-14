@@ -76,7 +76,7 @@ bool ParseUrl(std::string const& url, Protocol& protocol, int& port, std::string
 		if (!(matchedUrl[4] == ""))
 		{
 			std::string documentStr = matchedUrl[4].str();
-			document = documentStr.substr(1, documentStr.length());
+			std::copy(documentStr.begin() + 1, documentStr.end(), std::back_inserter(document));
 		}
 		else
 		{
