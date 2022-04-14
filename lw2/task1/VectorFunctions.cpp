@@ -14,8 +14,8 @@ bool DivideByHalfMax(std::vector<float>& numbers)
 	}
 
 
-	float maxEl = *std::max_element(numbers.begin(), numbers.end());
-	float halfMaxEl = maxEl / 2;
+	const float maxEl = *std::max_element(numbers.begin(), numbers.end());
+	const float halfMaxEl = maxEl / 2;
 
 	if (halfMaxEl == 0)
 	{
