@@ -42,23 +42,23 @@ std::set<int> GeneratePrimeNumbersSet(int upperBound)
 
 	// Дать название лучше
 	// (был array)
-	std::vector<bool> primeNumberMatches(upperBound + 1, true);
+	std::vector<bool> sieve(upperBound + 1, true);
 	int count;
 	for (count = 2; count * count <= upperBound; count++)
 	{
-		if (primeNumberMatches[count])
+		if (sieve[count])
 		{
 			primeNumbers.insert(primeNumbers.end(), count);
 			for (int j = count * count; j <= upperBound; j += count)
 			{
-				primeNumberMatches[j] = false;
+				sieve[j] = false;
 			}
 		}
 	}
 
 	for (; count < upperBound + 1; count++)
 	{
-		if (primeNumberMatches[count])
+		if (sieve[count])
 		{
 			primeNumbers.insert(primeNumbers.end(), count);
 		}

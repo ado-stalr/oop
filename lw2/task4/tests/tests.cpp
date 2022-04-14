@@ -38,7 +38,6 @@ SCENARIO("Test with upperBound = 20")
 	int upperBound = 20;
 	std::set<int> expectingSet{ 2, 3, 5, 7, 11, 13, 17, 19 };
 	std::set<int>set = GeneratePrimeNumbersSet(upperBound);
-	REQUIRE(set.size() == 8);
 	REQUIRE(set == expectingSet);
 }
 
