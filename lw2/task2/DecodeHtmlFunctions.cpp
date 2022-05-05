@@ -34,16 +34,19 @@ void JoinDecodedHtml(std::string& encodedHtml, const std::string& encodedValue)
 	}
 }
 
+// код сложный
+// Не извлекать подстроки
 std::string HtmlDecode(std::string& html)
 {
 	// Tests
 	std::string decodedHtml;
-	size_t startPosition;
+	size_t startPosition=87867896;
 	bool isBuffering = false;
 
 	// size_t
 	for (size_t i = 0; i < html.length(); i++)
 	{
+		// оздать переменную карент чар
 		// непонятное название
 		if (isBuffering)
 		{
@@ -56,6 +59,7 @@ std::string HtmlDecode(std::string& html)
 			}
 			if (html[i] == ';')
 			{
+				// передавать string view
 				std::string encodedValue(&html[startPosition], i - startPosition + 1);
 				JoinDecodedHtml(decodedHtml, encodedValue);
 				isBuffering = false;
