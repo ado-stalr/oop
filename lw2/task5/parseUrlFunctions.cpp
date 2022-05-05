@@ -10,6 +10,8 @@ const std::string DOC_TEXT = "DOCUMENT: ";
 
 const int MAX_PORT = 65535;
 
+//перенести to lower сюда
+
 Protocol GetProtocol(const std::string& protocolStr)
 {
 	if (protocolStr == "http")
@@ -47,16 +49,20 @@ int GetPortFromProtocol(Protocol protocol)
 
 bool ParseUrl(std::string const& url, Protocol& protocol, int& port, std::string& host, std::string& document)
 {
+	// строки могли прийти не пустыми...
 	std::string lowerUrl;
 	lowerUrl.resize(url.length());
+	// принимать Unsigned char
 	transform(url.begin(), url.end(), lowerUrl.begin(), [](char ch) {return tolower(ch); });
+	// использовать smatch
 	std::cmatch matchedUrl;
 	std::regex regex("(http|https|ftp)://([a-zA-Z0-9._-]+)(:[0-9]+)?(/.+)?");
 	if (regex_match(lowerUrl.c_str(), matchedUrl, regex))
 	{
 		protocol = GetProtocol(matchedUrl[1]);
 		host = matchedUrl[2];
-		if (matchedUrl[3] == "")
+		//empty использовать
+		if (matchedUrl[3] == "")// проверять empty
 		{
 			port = GetPortFromProtocol(protocol);
 		}
@@ -64,7 +70,8 @@ bool ParseUrl(std::string const& url, Protocol& protocol, int& port, std::string
 		{
 			std::string portStr = matchedUrl[3];
 			portStr.erase(0, 1);
-			if (!(stoi(portStr) < 1 || stoi(portStr) > 65535))
+			// создать переменную  одним вызовом stoi
+			if (!(stoi(portStr) < 1 || stoi(portStr) > MAX_PORT))
 			{
 				port = stoi(portStr);
 			}

@@ -10,7 +10,7 @@ int main()
 {
 	std::cout << WELCOME_TEXT << std::endl;
 	std::string url;
-	while (getline(cin, url) && url != EXIT_TEXT)
+	while (getline(std::cin, url) && url != EXIT_TEXT)
 	{
 		Protocol protocol;
 		int port;

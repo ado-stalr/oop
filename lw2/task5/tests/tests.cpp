@@ -68,6 +68,9 @@ SCENARIO("ParseUrl: with port")
 	REQUIRE((result && host == "www.ya.com" && port == 59 && document == "docs/document1.html?page=30&lang=en#title" && protocol == Protocol::HTTP));
 }
 
+
+// в тестах надо проверять оба значения вблизи границ
+// добавить тесты с разным регистром схемы
 SCENARIO("ParseUrl: port is more limitation")
 {
 	std::string url = "http://www.ya.com:65536/docs/document1.html?page=30&lang=en#title";
